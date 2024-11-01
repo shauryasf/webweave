@@ -1,0 +1,16 @@
+@import url(https://db.onlinewebfonts.com/c/1868e326d3ee28e5395f6efa2bc037bf?family=Eina01-Regular);
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Eina01-Regular';
+}
+
+.h-10.w-10 svg {
+  fill: white;
+}
+
+.gjs-toolbar-items {
+  display: flex;
+  align-items: center;
+}
