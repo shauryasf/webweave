@@ -18,6 +18,7 @@ export default function App() {
         <Route index element={<HomePage />} />
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/project/:projectId" element={<CustomEditor />} />
       </Routes>
     </BrowserRouter>
   );
