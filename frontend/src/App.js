@@ -4,6 +4,8 @@ import * as React from 'react';
 import HomePage from './pages/HomePage';
 import AuthPage from './pages/AuthPage';
 import DashboardPage from './pages/DashboardPage';
+import axios from 'axios';
+import CustomEditor from './components/CustomEditor';
 
 const theme = createTheme({
   palette: {
