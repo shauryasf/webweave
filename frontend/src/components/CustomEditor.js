@@ -83,8 +83,9 @@ function CustomEditor(){
     editor.Storage.add("remote", {
       async load(){
         try {
-          const response = await axios.get(`http://localhost:5000/project_data?projectId=${projectId}`, {headers: {Authorization: "Bearer " + window.localStorage.getItem("webweave-token")}});
+          const response = await axios.get(`http://localhost:5000/project/project_data?projectId=${projectId}`, {headers: {Authorization: "Bearer " + window.localStorage.getItem("webweave-token")}});
           if (response.status !== 200){
+            console.log(response);
             navigate('/dashboard')
             return;
           }
@@ -123,6 +124,36 @@ function CustomEditor(){
         //   navigate('/dashboard')
         // }
     })
+    // Add your custom header component here
+    editor.Components.addType('custom-header', {
+      model: {
+        defaults: {
+          tagName: 'header',
+          draggable: true,
+          droppable: true,
+          editable: true,
+          attributes: { class: 'custom-header' },
+          content: `
+            <h1>Your Custom Header</h1>
+            <nav>
+              <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#contact">Contact</a></li>
+              </ul>
+            </nav>
+          `,
+        },
+      },
+    });
+
+    // Add block for the custom header component
+    editor.Blocks.add('custom-header', {
+      label: 'Custom Header',
+      category: 'Basic',
+      content: { type: 'custom-header' },
+    });
   };
   return (
     <ThemeProvider theme={theme}>
