@@ -74,9 +74,9 @@ class Project:
         if not user:
             return {"message": "User not found"}, 404
         if project_type == 'created':
-            projects = list(map(Project.getProjectMetadata, user.get('createdProjects', [])))
+            projects = list(map(getProjectMetadata, user.get('createdProjects', [])))
         elif project_type == 'invited':
-            projects = list(map(Project.getInvitedProjectMetadata, user.get('invitedProjects', [])))
+            projects = list(map(getInvitedProjectMetadata, user.get('invitedProjects', [])))
         else:
             return {"message": "Invalid project type"}, 400
         return {"projects": projects}, 200

@@ -72,6 +72,7 @@ def get_projects():
     return projects
 
 @project_bp.route('/invite', methods=['POST'])
+@jwt_required()
 def invite():
     data = request.json
     project_id = data.get('projectId')
@@ -96,7 +97,7 @@ def get_invited_projects():
     return result
 
 
-@project_bp.route('/remove_invite', methods=['GET'])
+@project_bp.route('/remove_invite', methods=['POST'])
 @jwt_required()
 def remove_invite():
     data = request.json

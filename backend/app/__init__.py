@@ -19,7 +19,7 @@ def create_app():
     mongo.init_app(app)
     bcrypt.init_app(app)
     jwt.init_app(app)
-    socketio.init_app(app)
+    socketio.init_app(app, cors_allowed_origins="*")
 
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(project_bp, url_prefix='/project')
