@@ -1,9 +1,100 @@
-import { FaUser, FaTrash, FaUsers, FaArrowRight } from 'react-icons/fa';
+import { FaUser, FaTrash, FaUsers, FaArrowRight, FaSleigh } from 'react-icons/fa';
+import { HiRocketLaunch } from "react-icons/hi2";
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import UserManagementModal from './UserManagementModal';
+import CustomModal from './CustomModal';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const ProjectCard = ({ project, isCreator, handleProjectClick, handleManageUsers, handleDeleteProject }) => {
     const [manageUserModal, setManageUserModal] = useState(false);
+    const [isModalOpen, setModalOpen] = useState(false);
+    const navigate = useNavigate();
+    const [vercelToken, setVercelToken] = useState(null); // Store the Vercel token
+    const [deploymentName, setDeploymentName] = useState(''); // Deployment name input
+    const [isDeploying, setIsDeploying] = useState(false); // Track deployment state
+    const [deployedUrl, setDeployedUrl] = useState(null)
+
+    const openInNewTab = (url) => {
+        // Check if URL starts with "http://" or "https://"; if not, add "https://"
+        const validUrl = url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`;
+        
+        const newWindow = window.open(validUrl, '_blank', 'noopener,noreferrer');
+        if (newWindow) newWindow.opener = null;
+    };
+    
+
+    const handleButtonClick = () => {
+        const token = window.localStorage.getItem('webweave-vercel-token');
+        if (token) {
+            setVercelToken(token);
+        }
+        setModalOpen(true);
+    };
+
+    // Function to handle login with Vercel
+    const handleLoginWithVercel = () => {
+        // Redirect to Vercel integration URL
+        window.location.replace('https://vercel.com/integrations/webweave/new');
+    };
+
+    // Handle deployment creation
+    const handleCreateDeployment = async () => {
+        if (!deploymentName) return alert("Please enter a deployment name");
+        setIsDeploying(true);
+        try {
+            const dataResponse = await axios.get(`http://localhost:5000/project/project_data?projectId=${project.id}`, {headers: {Authorization: "Bearer " + window.localStorage.getItem("webweave-token")}})
+            var htmlContent = dataResponse.data.html;
+            htmlContent += "\n<link rel='stylesheet' href='styles.css'>"
+            const cssContent = dataResponse.data.css;
+            const response = await axios.post(
+                'https://api.vercel.com/v13/deployments',
+                {
+                name: deploymentName,
+                target: 'production',
+                files: [
+                    {
+                            "data": htmlContent,
+                            "encoding": "utf-8",
+                            "file": "build/index.html"
+                    },
+                    {
+                            "data": cssContent,
+                            "encoding": "utf-8",
+                            "file": "build/styles.css"
+                    }
+                ],
+                projectSettings: {
+                    "buildCommand": null,
+                    "devCommand": null,
+                    "framework": null,
+                    "commandForIgnoringBuildStep": "",
+                    "installCommand": null,
+                    "outputDirectory": null,
+                    "rootDirectory": "build",
+                    "serverlessFunctionRegion": null,
+                    "sourceFilesOutsideRootDirectory": false,
+                },
+                // Include any other necessary data here, such as Git repo URL or files
+                },
+                {
+                headers: {
+                    Authorization: `Bearer ${vercelToken}`,
+                    'Content-Type': 'application/json'
+                }
+                }
+            );
+            setDeployedUrl(response.data.alias[0])
+            toast.success("Deployment successful")
+            setDeploymentName("")
+        } catch (error) {
+            toast.error(error.message)
+        } finally {
+            setIsDeploying(false);
+        }
+    };
+
     return (
         <>
             <div className="flex items-center justify-between bg-gray-900 p-4 rounded-lg shadow hover:bg-gray-800 transition duration-300 mb-3">
@@ -29,6 +120,9 @@ const ProjectCard = ({ project, isCreator, handleProjectClick, handleManageUsers
                             >
                                 <FaTrash />
                             </button>
+                            <button onClick={handleButtonClick} className="text-white hover:text-green-400 text-xl" title="Deploy">
+                                <HiRocketLaunch />
+                            </button>
                         </>
                     )}
                     <button onClick={() => handleProjectClick(project.id)} className="text-white hover:text-green-400 text-xl" title="Open Project">
@@ -39,6 +133,50 @@ const ProjectCard = ({ project, isCreator, handleProjectClick, handleManageUsers
             {manageUserModal && (
                 <UserManagementModal projectId={project.id} onClose={() => setManageUserModal(false)} />
             )}
+            {/* Modal for Vercel Login */}
+            {isModalOpen && (
+                <CustomModal
+                open={isModalOpen}
+                title={!vercelToken ? "Login with Vercel" : "Deploy your project"}
+                close={() => setModalOpen(false)}
+                >
+                <div className="text-center">
+                    {!vercelToken ? (
+                    <>
+                        <p>You need to log in with Vercel to publish your site.</p>
+                        <button
+                        onClick={handleLoginWithVercel}
+                        className="bg-black text-white rounded p-3 mt-3"
+                        >
+                        Login with Vercel
+                        </button>
+                    </>
+                    ) : (
+                        <div className="flex flex-col items-start">
+                        <p className="mt-5 text-lg font-normal">Enter deployment details:</p>
+                        <input
+                          type="text"
+                          placeholder="Enter deployment name"
+                          value={deploymentName}
+                          onChange={(e) => setDeploymentName(e.target.value)}
+                          className="border rounded p-2 w-[80%] mt-3 text-black"
+                        />
+                        <button
+                          onClick={handleCreateDeployment}
+                          className="py-2 mt-4 rounded bg-green-500 hover:bg-green-600 transition duration-300 p-6"
+                          disabled={isDeploying}
+                        >
+                          {isDeploying ? 'Deploying...' : 'Create Deployment'}
+                        </button>
+                        {
+                            deployedUrl !== null ? 
+                            <p className="mt-[30px] text-xl">🚀 Your website is live now at <span onClick={() => openInNewTab(deployedUrl)} className='text-green-600 font-semibold cursor-pointer'>{deployedUrl}</span> </p>
+                            : ""
+                        }
+                      </div>
+                    )}
+                </div>
+            </CustomModal>)}
         </>
     )
 };
