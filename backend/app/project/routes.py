@@ -71,6 +71,14 @@ def get_projects():
 
     return projects
 
+@project_bp.route('/projects', methods=['DELETE'])
+@jwt_required()
+def delete_project():
+    email = get_jwt_identity()
+    project_id = request.args.get('projectId')
+    status = Project.delete_project(email, project_id)
+    return status
+
 @project_bp.route('/invite', methods=['POST'])
 @jwt_required()
 def invite():

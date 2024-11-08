@@ -3,6 +3,12 @@ from ..extensions import mongo, bcrypt
 class User:
     @staticmethod
     def create_user(email, password):
+        # Check if the email is already registered
+        existing_user = mongo.db.users.find_one({"email": email})
+        if existing_user:
+            return {"error": "Email already registered"}, 400
+
+        # If the email is not registered, proceed to create the user
         hashed_pw = bcrypt.generate_password_hash(password).decode('utf-8')
         user_data = {
             'email': email,
@@ -11,6 +17,9 @@ class User:
             'invitedProjects': []
         }
         mongo.db.users.insert_one(user_data)
+
+        return {"message": "User created successfully"}, 201
+
 
     @staticmethod
     def find_by_email(email):

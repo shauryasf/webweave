@@ -8,7 +8,7 @@ class Project:
         project_id = str(uuid.uuid4())
         mongo.db.users.update_one(
             {"email": current_user},
-            {"$push": {"createdProjects": {"data": {}, "name": project_name, "id": project_id, "createdAt": project_created_at, "createdBy": current_user, "invitedUsers": []}}}
+            {"$push": {"createdProjects": {"data": {}, "name": project_name, "id": project_id, "createdAt": project_created_at, "createdBy": current_user, "invitedUsers": [], "html": "" , "css": ""}}}
         )
         return project_id
 
@@ -48,7 +48,7 @@ class Project:
 
         if result and "createdProjects" in result:
             project_data = result["createdProjects"][0]
-            return {"data": project_data["data"]}, 200
+            return {"data": project_data["data"], "html": project_data["html"], "css": project_data["css"]}, 200
 
         result = mongo.db.users.find_one(
             {"email": email, "invitedProjects.id": project_id},
@@ -64,7 +64,7 @@ class Project:
 
             if owner_result and "createdProjects" in owner_result:
                 project_data = owner_result["createdProjects"][0]
-                return {"data": project_data["data"]}, 200
+                return {"data": project_data["data"], "html": project_data["html"], "css": project_data["css"]}, 200
 
         return {"message": "No project found with given ID"}, 404
 
@@ -80,9 +80,32 @@ class Project:
         else:
             return {"message": "Invalid project type"}, 400
         return {"projects": projects}, 200
-    
+
+    @staticmethod
+    def delete_project(email, project_id):
+        # Attempt to delete the project only if the current user is the owner
+        result = mongo.db.users.update_one(
+            {"email": email, "createdProjects.id": project_id},
+            {"$pull": {"createdProjects": {"id": project_id}}}
+        )
+
+        if result.modified_count == 0:
+            return {"message": "Project not found or access denied."}, 404
+
+        # Also remove the project from any invited users' `invitedProjects` list
+        mongo.db.users.update_many(
+            {"invitedProjects.id": project_id},
+            {"$pull": {"invitedProjects": {"id": project_id}}}
+        )
+
+        return {"message": "Project deleted successfully."}, 200
+        
     @staticmethod
     def invite(project_id, invitee_email, owner_email):
+        # Check if the invitee email is registered
+        invitee = mongo.db.users.find_one({"email": invitee_email})
+        if not invitee:
+            return {"message": "User does not exist"}, 404
         project = mongo.db.users.find_one(
             {"email": owner_email, "createdProjects.id": project_id},
             {"createdProjects": {"$elemMatch": {"id": project_id}}}

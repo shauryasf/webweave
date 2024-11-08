@@ -36,7 +36,7 @@ def update_project(data):
     if user and "createdProjects" in user:
         mongo.db.users.update_one(
             {"email": email, "createdProjects.id": project_id},
-            {"$set": {"createdProjects.$.data": updated_data}}
+            {"$set": {"createdProjects.$.data": updated_data, "createdProjects.$.html": data.get("html"), "createdProjects.$.css": data.get("css")}}
         )
     else:
         invited_user = mongo.db.users.find_one(
@@ -52,7 +52,7 @@ def update_project(data):
 
         mongo.db.users.update_one(
             {"email": owner_email, "createdProjects.id": project_id},
-            {"$set": {"createdProjects.$.data": updated_data}}
+            {"$set": {"createdProjects.$.data": updated_data, 'html': data.get('html'), 'css': data.get('css')}}
         )
 
     emit('project_update', {'data': updated_data, 'html': data.get('html'), 'css': data.get('css')}, room=project_id)

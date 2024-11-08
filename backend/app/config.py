@@ -11,3 +11,5 @@ class Config:
     DB_URL = os.getenv("DB_URL")
     DB_NAME = os.getenv("DB_NAME")
     MONGO_URI = os.getenv("DB_URL")
+    VERCEL_CLIENT_ID = os.getenv("VERCEL_CLIENT_ID")
+    VERCEL_CLIENT_SECRET = os.getenv("VERCEL_CLIENT_SECRET")
