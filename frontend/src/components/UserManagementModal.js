@@ -1,42 +1,70 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaTrash } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 const UserManagementModal = ({ projectId, onClose }) => {
+    const BASE_URL = process.env.REACT_APP_BASE_URL
+    // invitedUsers keep track of all the invited users
     const [invitedUsers, setInvitedUsers] = useState([]);
+    // new user's email that is to be invited
     const [newUserEmail, setNewUserEmail] = useState("");
 
+    // on load, fetch all the invited users for the current project
     useEffect(() => {
         fetchInvitedUsers();
     }, []);
 
     const fetchInvitedUsers = async () => {
+        // try to fetch the invited users by the projectId
         try {
-            const response = await axios.get(`http://localhost:5000/project/project_invites?projectId=${projectId}`, {headers: {Authorization: "Bearer " + window.localStorage.getItem("webweave-token")}});
+            const response = await axios.get(`${BASE_URL}/project/project_invites?projectId=${projectId}`, {headers: {Authorization: "Bearer " + window.localStorage.getItem("webweave-token")}});
             setInvitedUsers(response.data.invitedUsers);
         } catch (error) {
-            console.error("Error fetching invited users", error);
-        }
-    };
-
-    const handleAddUser = async () => {
-        if (newUserEmail) {
-            try {
-                await axios.post('http://localhost:5000/project/invite', { projectId, inviteeEmail: newUserEmail }, {headers: {Authorization: "Bearer " + window.localStorage.getItem("webweave-token")}});
-                setInvitedUsers([...invitedUsers, newUserEmail]);
-                setNewUserEmail("");
-            } catch (error) {
-                console.error("Error inviting user", error);
+            if (error.response){
+                toast.error(error.response.data.message)
+            } else {
+                toast.error(error.message)
             }
         }
     };
 
+    const handleAddUser = async () => {
+        // if email is not empty
+        // try to add the email to the invitedUsers 
+        // if success add it on view too
+        // else show error
+        if (newUserEmail) {
+            try {
+                await axios.post(`${BASE_URL}/project/invite`, { projectId, inviteeEmail: newUserEmail }, {headers: {Authorization: "Bearer " + window.localStorage.getItem("webweave-token")}});
+                setInvitedUsers([...invitedUsers, newUserEmail]);
+                setNewUserEmail("");
+                toast.success("User added successfully")
+            } catch (error) {
+                if (error.response){
+                    toast.error(error.response.data.message)
+                } else {
+                    toast.error(error.message)
+                }
+            }
+        } else {
+            toast.error("Email can not be empty")
+        }
+    };
+
     const handleRemoveUser = async (email) => {
+        // try to remove the person from the invitedUsers
+        // if not success, show toast error
         try {
-            await axios.post('http://localhost:5000/project/remove_invite', { projectId, inviteeEmail: email }, {headers: {Authorization: "Bearer " + window.localStorage.getItem("webweave-token")}});
+            await axios.post(`${BASE_URL}/project/remove_invite`, { projectId, inviteeEmail: email }, {headers: {Authorization: "Bearer " + window.localStorage.getItem("webweave-token")}});
             setInvitedUsers(invitedUsers.filter(user => user !== email));
+            toast.success("User removed successfully")
         } catch (error) {
-            console.error("Error removing user", error);
+            if (error.response){
+                toast.error(error.response.data.message)
+            } else {
+                toast.error(error.message)
+            }
         }
     };
 
