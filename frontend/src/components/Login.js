@@ -2,15 +2,19 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+
 export default function Login() {
+    const BASE_URL = process.env.REACT_APP_BASE_URL;
+    // email and password to keep track of user's input
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
     const handleLogin = async (event) => {
+        // send request to backend and if it is success, save the auth token and email
         event.preventDefault();
         try {
-            const response = await axios.post('http://localhost:5000/auth/login', { email, password });
+            const response = await axios.post(`${BASE_URL}/auth/login`, { email, password });
             window.localStorage.setItem("webweave-token", response.data.token);
             window.localStorage.setItem("webweave-email", email)
             navigate("/dashboard")
