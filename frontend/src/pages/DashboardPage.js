@@ -9,6 +9,7 @@ import { InfinitySpin } from 'react-loader-spinner';
 import { toast } from "react-toastify";
 
 function DashboardPage() {
+    const BASE_URL = process.env.REACT_APP_BASE_URL;
     const navigate = useNavigate();
     const [token, setToken] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,22 +31,24 @@ function DashboardPage() {
     };
 
     useEffect(() => {
+        // verify the token, if it is invalid, redirect the user to /auth
         const tempToken = window.localStorage.getItem("webweave-token");
         if (!tempToken) {
             navigate("/auth");
             return;
         }
-        axios.get("http://localhost:5000/project/verify_token", { headers: { Authorization: "Bearer " + tempToken } })
+        axios.get(`${BASE_URL}/project/verify_token`, { headers: { Authorization: "Bearer " + tempToken } })
             .then(res => setToken(tempToken))
             .catch(err => navigate("/auth"));
     }, []);
 
     useEffect(() => {
+        // get the created and invited projects of the user
         const fetchProjects = async () => {
             try {
                 setLoading(true); // Show loading spinner
-                const createdResponse = await axios.get('http://localhost:5000/project/projects?type=created', { headers: { Authorization: "Bearer " + window.localStorage.getItem("webweave-token") } });
-                const invitedResponse = await axios.get('http://localhost:5000/project/projects?type=invited', { headers: { Authorization: "Bearer " + window.localStorage.getItem("webweave-token") } });
+                const createdResponse = await axios.get(`${BASE_URL}/project/projects?type=created`, { headers: { Authorization: "Bearer " + window.localStorage.getItem("webweave-token") } });
+                const invitedResponse = await axios.get(`${BASE_URL}/project/projects?type=invited`, { headers: { Authorization: "Bearer " + window.localStorage.getItem("webweave-token") } });
                 setCreatedProjects(createdResponse.data.projects);
                 setInvitedProjects(invitedResponse.data.projects);
             } catch (error) {
@@ -61,13 +64,16 @@ function DashboardPage() {
         fetchProjects();
     }, []);
 
+    // navigate to the project route
     const handleProjectClick = (projectId) => {
         navigate(`/project/${projectId}`);
     };
 
+
     const handleDeleteProject = async (projectId) => {
+        // try to delete the project by sending request to the backend with the project id and token
         try {
-            await axios.delete(`http://localhost:5000/project/projects?projectId=${projectId}`, {headers: {Authorization: "Bearer " + window.localStorage.getItem("webweave-token")}});
+            await axios.delete(`${BASE_URL}/project/projects?projectId=${projectId}`, {headers: {Authorization: "Bearer " + window.localStorage.getItem("webweave-token")}});
             setCreatedProjects((prev) => prev.filter((project) => project.id !== projectId));
             toast.success("Project deleted successfully")
         } catch (error) {
@@ -80,6 +86,7 @@ function DashboardPage() {
     };
     return (
         <div className="flex flex-col min-h-screen bg-gradient-to-b from-[#024f3c_5%] to-[#141716_95%] text-white">
+            {/* Create new project modal */}
             <ProjectModal
                 isOpen={isModalOpen}
                 onClose={handleCloseModal}
@@ -101,6 +108,7 @@ function DashboardPage() {
                     </div>
                 ) : (
                     <>
+                        {/* Show created and invited projects */}
                         <section>
                             <h3 className="text-xl font-semibold mb-3">Created Projects</h3>
                             {createdProjects.length > 0 ? (
