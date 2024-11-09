@@ -1,5 +1,6 @@
 import React from 'react';
 
+// component to show a feature on the homepage
 const FeatureCard = ({icon, title, description}) => {
   return (
     <div className="group relative w-64 p-4 rounded-lg bg-[#162e26] text-white hover:border-green-400 border border-transparent transition-all duration-300 cursor-pointer flex flex-col items-start">
