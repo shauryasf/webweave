@@ -177,6 +177,21 @@ class Project:
         
     @staticmethod
     def invite(project_id, invitee_email, owner_email):
+        """
+        Invite a user to a project.
+        This function checks if the invitee email is registered, verifies that the inviter is the project owner,
+        and updates the database to reflect the invitation.
+        Args:
+            project_id (str): The ID of the project to which the user is being invited.
+            invitee_email (str): The email of the user being invited.
+            owner_email (str): The email of the project owner sending the invitation.
+        Returns:
+            tuple: A dictionary containing a message and an HTTP status code.
+                - If the invitee email is not registered, returns ({"message": "User does not exist"}, 404).
+                - If the inviter is not the project owner, returns ({"message": "Only the project owner can invite users"}, 403).
+                - If the invitation is successful, returns ({"message": "User invited successfully"}, 200).
+        """
+
         # Check if the invitee email is registered
         invitee = mongo.db.users.find_one({"email": invitee_email})
         if not invitee:
@@ -203,6 +218,16 @@ class Project:
     
     @staticmethod
     def get_invited_project(project_id, current_user):
+        """
+        Retrieve the list of users invited to a specific project.
+        Args:
+            project_id (str): The ID of the project to retrieve.
+            current_user (str): The email of the current user making the request.
+        Returns:
+            tuple: A dictionary containing the list of invited users and an HTTP status code.
+                   If the project is not found or the user is not the owner, returns a message and a 403 status code.
+        """
+
         project = mongo.db.users.find_one(
             {"email": current_user, "createdProjects.id": project_id},
             {"createdProjects.$": 1}
@@ -216,6 +241,20 @@ class Project:
     
     @staticmethod
     def remove_invite(project_id, invitee_email, owner_email):
+        """
+        Remove an invitee from a project.
+        This function removes an invitee from the list of invited users for a specific project
+        and also removes the project from the invitee's list of invited projects.
+        Args:
+            project_id (str): The ID of the project.
+            invitee_email (str): The email of the invitee to be removed.
+            owner_email (str): The email of the project owner.
+        Returns:
+            tuple: A tuple containing a dictionary with a message and an HTTP status code.
+                - If the project is not found or access is denied, returns ({"message": "Project not found or access denied."}, 403).
+                - If the invitee is successfully removed, returns ({"message": "Invitee removed from the project successfully."}, 200).
+        """
+
         project = mongo.db.users.find_one(
             {"email": owner_email, "createdProjects.id": project_id},
             {"_id": 0, "createdProjects.$": 1}
