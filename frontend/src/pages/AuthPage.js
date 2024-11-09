@@ -7,12 +7,14 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 export default function AuthPage() {
+    const BASE_URL = process.env.REACT_APP_BASE_URL
     const navigate = useNavigate();
     const [isLogin, setIsLogin] = useState(true); // State to toggle between Login and Signup forms
 
     useEffect(() => {
+        // verify the token, if it is valid, redirect to /dashboard as user is already logged in
         const tempToken = window.localStorage.getItem("webweave-token");
-        axios.get("http://localhost:5000/project/verify_token", {
+        axios.get(`${BASE_URL}/project/verify_token`, {
             headers: { Authorization: "Bearer " + tempToken }
         })
         .then(res => navigate("/dashboard"))
