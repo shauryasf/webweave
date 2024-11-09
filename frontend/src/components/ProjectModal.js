@@ -3,21 +3,32 @@ import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import ReactModal from "react-modal";
 import { FaTimes } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 const ProjectModal = ({ isOpen, onClose, onCreate }) => {
+    const BASE_URL = process.env.REACT_APP_BASE_URL
     const [projectName, setProjectName] = useState('');
     const navigate = useNavigate();
 
     const handleCreateProject = async () => {
-        if (!projectName) return;
-
+        // if project name is empty or null, show error
+        if (!projectName){
+            toast.error("Project name can not be empty")
+            return;
+        }
+        
+        // try to post the new project to the backend
         try {
-            const response = await axios.post('http://localhost:5000/project/add_project', {name: projectName, createdAt: (new Date().getTime())/1000}, {headers: {Authorization: "Bearer " + window.localStorage.getItem("webweave-token")}});
+            const response = await axios.post(`${BASE_URL}/project/add_project`, {name: projectName, createdAt: (new Date().getTime())/1000}, {headers: {Authorization: "Bearer " + window.localStorage.getItem("webweave-token")}});
             const projectId = response.data.id;
             onCreate(); // Close modal
             navigate(`/project/${projectId}`); // Redirect to new project
         } catch (error) {
-            console.error("Error creating project:", error);
+            if (error.response){
+                toast.error(error.response.data.message)
+            } else {
+                toast.error(error.message)
+            }
         }
     };
 
