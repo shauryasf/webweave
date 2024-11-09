@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -14,7 +15,11 @@ export default function Login() {
             window.localStorage.setItem("webweave-email", email)
             navigate("/dashboard")
         } catch (error) {
-            console.error('Error:', error);
+            if (error.response){
+                toast.error(error.response.data.error)
+            } else {
+                toast.error(error.message)
+            }
         }
     };
 
@@ -33,7 +38,7 @@ export default function Login() {
                         />
                         <label
                             className={`absolute top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none transition-all duration-200
-                                ${email ? 'text-xs -top-[10px] left-0' : 'text-base top-1/2 left-2'}`}
+                                ${email ? 'text-xs top-[-10px] left-0' : 'text-base top-1/2 left-2'}`}
                         >
                             Email
                         </label>
@@ -48,7 +53,7 @@ export default function Login() {
                         />
                         <label
                             className={`absolute top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none transition-all duration-200
-                                ${password ? 'text-xs -top-[10px] left-0' : 'text-base top-1/2 left-2'}`}
+                                ${password ? 'text-xs top-[-10px] left-0' : 'text-base top-1/2 left-2'}`}
                         >
                             Password
                         </label>

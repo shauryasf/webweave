@@ -6,6 +6,8 @@ import AuthPage from './pages/AuthPage';
 import DashboardPage from './pages/DashboardPage';
 import axios from 'axios';
 import CustomEditor from './components/CustomEditor';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import VercelOAuth from './pages/VercelOAuth';
 
 const theme = createTheme({
   palette: {
@@ -21,6 +23,7 @@ export default function App() {
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/project/:projectId" element={<CustomEditor />} />
+        <Route path="/vercel-oauth" element={<VercelOAuth />} />
       </Routes>
     </BrowserRouter>
   );
