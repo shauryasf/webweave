@@ -4,19 +4,16 @@ import * as React from 'react';
 import HomePage from './pages/HomePage';
 import AuthPage from './pages/AuthPage';
 import DashboardPage from './pages/DashboardPage';
-import axios from 'axios';
 import CustomEditor from './components/CustomEditor';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
 import VercelOAuth from './pages/VercelOAuth';
-
-const theme = createTheme({
-  palette: {
-    mode: 'dark',
-  },
-});
 
 export default function App() {
   return (
+    // routes for the website
+    // /auth -> user login
+    // /dashboard -> user dashboard
+    // /project/:projectId -> main website editor
+    // /vercel-oauth -> vercel oauth handler
     <BrowserRouter>
       <Routes>
         <Route index element={<HomePage />} />
