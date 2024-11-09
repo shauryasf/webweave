@@ -4,14 +4,17 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 export default function Signup() {
+    const BASE_URL = process.env.REACT_APP_BASE_URL
+    // email and password to keep track of user's input
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
     const handleSignup = async (event) => {
         event.preventDefault();
+        // try to register the user, if success then save auth token and email
         try {
-            const response = await axios.post('http://localhost:5000/auth/register', { email, password });
+            const response = await axios.post(`${BASE_URL}/auth/register`, { email, password });
             window.localStorage.setItem("webweave-token", response.data.token);
             window.localStorage.setItem("webweave-email", email)
             navigate("/dashboard")
