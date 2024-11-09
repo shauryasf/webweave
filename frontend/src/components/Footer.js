@@ -1,5 +1,6 @@
 import React from 'react';
 
+// footer to be shown on the homepage
 const Footer = () => {
   return (
     <footer className="w-full text-gray-300 py-4 px-6 flex items-center justify-between">
