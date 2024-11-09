@@ -1,3 +1,5 @@
+// CONSTANTS
+
 export const MAIN_BG_COLOR = 'bg-[#162e26]';
 
 export const MAIN_TXT_COLOR = 'text-white';
