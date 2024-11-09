@@ -8,8 +8,9 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 const ProjectCard = ({ project, isCreator, handleProjectClick, handleManageUsers, handleDeleteProject }) => {
-    const [manageUserModal, setManageUserModal] = useState(false);
-    const [isModalOpen, setModalOpen] = useState(false);
+    const BASE_URL = process.env.REACT_APP_BASE_URL
+    const [manageUserModal, setManageUserModal] = useState(false); // toggle modal open and close
+    const [isModalOpen, setModalOpen] = useState(false); // status to check if the modal is open or not
     const navigate = useNavigate();
     const [vercelToken, setVercelToken] = useState(null); // Store the Vercel token
     const [deploymentName, setDeploymentName] = useState(''); // Deployment name input
@@ -19,35 +20,42 @@ const ProjectCard = ({ project, isCreator, handleProjectClick, handleManageUsers
     const openInNewTab = (url) => {
         // Check if URL starts with "http://" or "https://"; if not, add "https://"
         const validUrl = url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`;
-        
         const newWindow = window.open(validUrl, '_blank', 'noopener,noreferrer');
         if (newWindow) newWindow.opener = null;
     };
     
 
     const handleButtonClick = () => {
+        // if token exists, set the token
         const token = window.localStorage.getItem('webweave-vercel-token');
         if (token) {
             setVercelToken(token);
         }
+        // open the modal
         setModalOpen(true);
     };
 
     // Function to handle login with Vercel
     const handleLoginWithVercel = () => {
         // Redirect to Vercel integration URL
-        window.location.replace('https://vercel.com/integrations/webweave/new');
+        window.location.replace(process.env.REACT_APP_INTERACTION_URL);
     };
 
     // Handle deployment creation
     const handleCreateDeployment = async () => {
-        if (!deploymentName) return alert("Please enter a deployment name");
+        if (!deploymentName){
+            toast.error("Enter a deployment name")
+            return;
+        }
+        // set loading to true
         setIsDeploying(true);
         try {
-            const dataResponse = await axios.get(`http://localhost:5000/project/project_data?projectId=${project.id}`, {headers: {Authorization: "Bearer " + window.localStorage.getItem("webweave-token")}})
+            // get the html and css data from the backend to send to the vercel api
+            const dataResponse = await axios.get(`${BASE_URL}/project/project_data?projectId=${project.id}`, {headers: {Authorization: "Bearer " + window.localStorage.getItem("webweave-token")}})
             var htmlContent = dataResponse.data.html;
             htmlContent += "\n<link rel='stylesheet' href='styles.css'>"
             const cssContent = dataResponse.data.css;
+            // post the html and css files to the vercel api along with the deployment name
             const response = await axios.post(
                 'https://api.vercel.com/v13/deployments',
                 {
@@ -76,7 +84,6 @@ const ProjectCard = ({ project, isCreator, handleProjectClick, handleManageUsers
                     "serverlessFunctionRegion": null,
                     "sourceFilesOutsideRootDirectory": false,
                 },
-                // Include any other necessary data here, such as Git repo URL or files
                 },
                 {
                 headers: {
@@ -85,6 +92,7 @@ const ProjectCard = ({ project, isCreator, handleProjectClick, handleManageUsers
                 }
                 }
             );
+            // if success, set the deployed url for the user to view
             setDeployedUrl(response.data.alias[0])
             toast.success("Deployment successful")
             setDeploymentName("")
@@ -146,7 +154,7 @@ const ProjectCard = ({ project, isCreator, handleProjectClick, handleManageUsers
                         <p>You need to log in with Vercel to publish your site.</p>
                         <button
                         onClick={handleLoginWithVercel}
-                        className="bg-black text-white rounded p-3 mt-3"
+                        className="w-[300px] py-2 mt-4 rounded bg-green-500 hover:bg-green-600 transition duration-300"
                         >
                         Login with Vercel
                         </button>
