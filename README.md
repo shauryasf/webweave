@@ -1,6 +1,6 @@
 
 # WebWeave
-<img src="https://raw.githubusercontent.com/shauryasf/webweave/refs/heads/main/images/logo.png?token=GHSAT0AAAAAAC2HFXTJCZESRK7JAXAZALAAZZPTAXA" height="100" width="100">
+<img src="https://github.com/user-attachments/assets/bcf5425e-ded7-4128-8f02-30c01aaa2ada" alt="logo" width="100" height="100">
 
 **WebWeave** is a powerful no-code website builder with a user-friendly drag-and-drop interface, allowing users to create, customize, and deploy websites effortlessly. Designed for flexibility and collaboration, WebWeave offers a range of features from live team editing to one-click hosting.
 
@@ -38,13 +38,14 @@
     -   `socket.io`: Real-time collaboration and updates.
 
 ## 📸 Screenshots
-![Image 1](https://raw.githubusercontent.com/shauryasf/webweave/refs/heads/main/images/image1.png?token=GHSAT0AAAAAAC2HFXTJGI3WSQFDIJN4M4ZAZZPSYVA)
-![Image 2](https://raw.githubusercontent.com/shauryasf/webweave/refs/heads/main/images/image2.png?token=GHSAT0AAAAAAC2HFXTJHNFGELHETTMQRSPYZZPS6IQ)
-![Image 3](https://raw.githubusercontent.com/shauryasf/webweave/refs/heads/main/images/image3.png?token=GHSAT0AAAAAAC2HFXTILMZDD726S46ZWVFKZZPS6WA)
-![Image 4](https://raw.githubusercontent.com/shauryasf/webweave/refs/heads/main/images/image4.png?token=GHSAT0AAAAAAC2HFXTIAQZ6WITVMKJZVQ6IZZPS67A)
-![Image 5](https://raw.githubusercontent.com/shauryasf/webweave/refs/heads/main/images/image5.png?token=GHSAT0AAAAAAC2HFXTJRINRT4OZNR7OMFL4ZZPS7IQ)
-![Image 6](https://raw.githubusercontent.com/shauryasf/webweave/refs/heads/main/images/image6.png?token=GHSAT0AAAAAAC2HFXTIFCAFJIDART6UPRGIZZPS7RA)
-![Image 7](https://raw.githubusercontent.com/shauryasf/webweave/refs/heads/main/images/image7.png?token=GHSAT0AAAAAAC2HFXTI4B24QPHIOHPKNXLGZZPS72A)
+
+![image1](https://github.com/user-attachments/assets/762c4b0d-d1b9-41f8-82ed-86f1497bcc1e)
+![image2](https://github.com/user-attachments/assets/3a1563cd-1de5-405e-86a9-d72c05e79365)
+![image3](https://github.com/user-attachments/assets/75f944c1-8b39-416f-ad51-d8eef71e3b18)
+![image4](https://github.com/user-attachments/assets/8f63e3fd-fab2-41a5-b382-bb091e275adc)
+![image5](https://github.com/user-attachments/assets/72489e06-bc2d-4be7-b980-6bfaf62f85fb)
+![image6](https://github.com/user-attachments/assets/a9a751d8-1e2d-484c-ab8e-cc78268712a7)
+![image7](https://github.com/user-attachments/assets/6117891e-a7e7-4af3-b685-5d154a9bb76f)
 
 ## 📖 Getting Started
 
