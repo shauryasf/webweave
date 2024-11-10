@@ -7,6 +7,8 @@ import { HiRocketLaunch } from "react-icons/hi2";
 import { AiOutlineTeam } from "react-icons/ai";
 import Footer from '../components/Footer';
 import { useNavigate } from 'react-router-dom';
+import { FaRobot } from "react-icons/fa";
+
 
 const HomePage = () => {
     const navigate = useNavigate();
@@ -30,6 +32,7 @@ const HomePage = () => {
             </section>
             <section className="flex flex-row justify-center gap-16 mt-4 mb-[10rem]" id="home-features">
                 <FeatureCard icon={<RiDragMove2Fill size={40} color='#16a34a' />} title="Drag-and-Drop" description="Allows users to easily move and arrange elements without needing to write any code." />
+                <FeatureCard icon={<FaRobot size={40} color='#16a34a' />} title="AI Code Generator" description="Users can prompt and generate HTML, CSS code right in the website editor and use that element." />
                 <FeatureCard icon={<HiRocketLaunch size={40} color='#16a34a' />} title="Hosting" description="Host your website with one-click on serverless platforms like Vercel on-the-go." />
                 <FeatureCard icon={<AiOutlineTeam size={40} color='#16a34a' />} title="Team Collaboration" description="Users can collaborate with their team via live updates and status changes." />
             </section>
